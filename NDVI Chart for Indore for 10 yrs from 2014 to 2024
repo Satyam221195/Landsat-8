@@ -1,0 +1,43 @@
+// Step 1 :Filter data for Kanpur
+
+// Define a time range
+var startDate = '2014-01-01';
+var endDate = '2024-01-31';
+
+// Filter the dataset
+var filtered = iitk
+  .filterBounds(geometry)
+  .filterDate(startDate, endDate);
+  
+  // Function to calculate NDVI from an image
+var addNDVI = function(image) {
+  var ndvi = image.normalizedDifference(['B5', 'B4']).rename('NDVI');
+  return image.addBands(ndvi);
+};
+
+// Apply the NDVI calculation to the image collection
+var withNDVI = filtered.map(addNDVI);
+
+  var sampleImage = withNDVI.first();
+print('Sample Image:', sampleImage);
+
+
+// Create a time-series chart of NDVI values
+var chart = ui.Chart.image.series({
+  imageCollection: withNDVI.select('NDVI'),
+  region: geometry,
+  reducer: ee.Reducer.mean(),
+  scale: 30, // Adjust scale according to the resolution of the dataset
+  xProperty: 'system:time_start'
+}).setOptions({
+  title: 'NDVI Landsat-8 Time-Series for Indore',
+  ylabel: 'NDVI',
+  xlabel: 'Date',
+  lineWidth: 1,
+  pointSize: 3,
+  series: [{ color: 'blue', label: 'NDVI' }]
+});
+
+// Print the chart to the console
+print(chart);
+  
