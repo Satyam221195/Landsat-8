@@ -1,4 +1,4 @@
-// Step 1 :Filter data for Kanpur
+// Step 1 :Filter data for Indore
 
 // Define a time range
 var startDate = '2014-01-01';
